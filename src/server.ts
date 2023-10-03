@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 enviroment.config({
   path: path.join(__dirname, "../.env.local"),
 });
-const url = `redis://default:123456@192.168.1.108:6379`;
+const url = process.env.REDIS_URL;
 const redisClient = redis.createClient({
   url,
 });
