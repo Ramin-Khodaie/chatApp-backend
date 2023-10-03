@@ -1,2 +1,9 @@
+#dependencies
 node_modules
+
+#uploaded files
 upload
+
+
+# local env files
+.env*.local
