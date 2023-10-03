@@ -7,7 +7,7 @@ import chatRouter from "./routes/chat";
 import enviroment from "dotenv";
 import path from "path";
 import connectDB from "./database/db";
-import * as redis from "redis";
+
 
 const app = express();
 
@@ -27,20 +27,6 @@ app.use(bodyParser.json());
 enviroment.config({
   path: path.join(__dirname, "../.env.local"),
 });
-const url = process.env.REDIS_URL;
-const redisClient = redis.createClient({
-  url,
-});
-
-(async () => {
-  redisClient.on("error", (err) => {
-    console.log("Error ---->", err);
-  });
-  redisClient.on("ready", () => console.log("redis is ready"));
-  await redisClient.connect();
-  console.log("PING");
-  await redisClient.ping().then((res) => console.log(res));
-})();
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/chat", chatRouter);

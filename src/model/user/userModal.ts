@@ -32,18 +32,12 @@ export const isUserExist = (email: string): Promise<boolean> => {
     })
 }
 
-export const getUserByEmail = (email: string): Promise<IUser> => {
-    console.log('before promise')
+export const getUserByEmail = (email: string): Promise<IUser | null> => {
     return new Promise(async (resolve, reject) => {
-        console.log('inside promise')
         try {
-            const foundedUser = await user.findOne({ email:email });
-            console.log('inside promise', foundedUser)
-            if (foundedUser) {
-                resolve(foundedUser)
-            }
+            const foundedUser = await user.findOne({ email: email });
+            resolve(foundedUser)
         } catch (error) {
-            console.log(error)
             reject(error)
         }
     })
