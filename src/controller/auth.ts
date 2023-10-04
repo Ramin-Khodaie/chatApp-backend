@@ -1,4 +1,5 @@
 import {
+  deleteRefreshToken,
   getUserByEmail,
   isUserExist,
   userSignUp,
@@ -6,8 +7,13 @@ import {
 import { Request, Response } from "express";
 import { userSignUpValidation } from "../utils/userValidation";
 import bcrypt from "bcrypt";
-import { createAccessToken, encryptedPassword } from "../utils/functions";
+import { createAccessToken, createRefreshToken } from "../utils/jwt";
 import { v4 as uuidV4 } from "uuid";
+import { encryptedPassword } from "../utils/functions";
+import { CustomRequest } from "../utils/authorization";
+import { deleteUserId } from "../utils/redis";
+
+
 
 // FIXME: clean the code 
 export const signup = async (req: Request, res: Response) => {
@@ -71,12 +77,24 @@ export const login = async (req: Request, res: Response) => {
         error: { message: "Entered password dose not match." },
       });
     }
-    const accessToken = await createAccessToken(email, user.userId);
-    // TODO: Implementing createRefreshToken    
+    const accessToken = await createAccessToken(user.email, user._id);
+    const refreshToken = await createRefreshToken(user.email, user._id)
     res
       .status(200)
-      .json({ status: "ok", message: "Login_Successfully", accessToken, user });
+      .json({ status: "ok", message: "Login_Successfully", accessToken, refreshToken });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error });
   }
 };
+
+export const logout = async (req: any, res: Response) => {
+  const token = req.headers.authorization?.replace(/^Bearer\s/, '');
+
+  const userId = req.userId;
+
+  deleteUserId(token);
+
+  const user = await deleteRefreshToken(userId as string, "");
+  res.status(200).json({ message: 'logged out successfully', token: req.headers.authorization })
+}

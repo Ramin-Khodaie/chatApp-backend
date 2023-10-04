@@ -1,9 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { Document, ObjectId } from "mongoose";
 import { Schema } from 'mongoose';
-import bcrypt from 'bcrypt';
 
-export interface IUser {
-    userId:string,
+export interface IUser extends Document {
+    userId: string,
     userName: string,
     phoneNumber: string,
     email: string,
@@ -12,10 +11,10 @@ export interface IUser {
     confirmPassword: string
 }
 
-const userSchema = new Schema<IUser>({    
-    userId:{
-        type:String,
-        required:true,
+const userSchema = new Schema({
+    userId: {
+        type: String,
+        required: true,
     },
     userName: {
         type: String,
@@ -41,7 +40,19 @@ const userSchema = new Schema<IUser>({
     avatar: {
         type: String,
         required: false
-    }
+    },
+    refreshToken: {
+        token: {
+            type: String,
+            default: "",
+            maxlength: 500,
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now(),
+            required: true,
+        },
+    },
 }, { timestamps: true })
 
 

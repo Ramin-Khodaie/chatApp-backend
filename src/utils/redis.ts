@@ -1,7 +1,3 @@
-
-import { ClientCommandOptions } from '@redis/client/dist/lib/client';
-import { CommandOptions } from '@redis/client/dist/lib/command-options';
-import { RedisCommandArgument } from '@redis/client/dist/lib/commands';
 import * as redis from 'redis';
 
 const redisClient = redis.createClient({
@@ -10,10 +6,10 @@ const redisClient = redis.createClient({
 
 redisClient.connect();
 
-export const setJWT = (key: any, value: number | RedisCommandArgument) => {
+export const setUserId = (token: any, userId: string) => {
     return new Promise(async (resolve, reject) => {
         try {
-            redisClient.set(key, value).then(res => resolve(res)).catch((err) => reject(err))
+            redisClient.set(token, userId.toString()).then(res => resolve(res)).catch((err) => reject(err))
         } catch (error) {
             reject(error)
         }
@@ -21,17 +17,17 @@ export const setJWT = (key: any, value: number | RedisCommandArgument) => {
 }
 
 
-export const getJWT = (key: any) => {
+export const getUserId = (token: any) => {
     return new Promise(async (resolve, reject) => {
         try {
-            redisClient.get(key).then((res) => resolve(res)).catch((err) => reject(err));
+            redisClient.get(token).then((res) => resolve(res)).catch((err) => reject(err));
         } catch (error) {
             reject(error)
         }
     })
 }
 
-export const deleteJWT = (key: any) => {
+export const deleteUserId = (key: any) => {
     return new Promise(async (resolve, reject) => {
         try {
             await redisClient.del(key).then((res) => resolve(res)).catch((err) => (reject(err)));
