@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { signup } from '../../controller/auth';
 import { login } from '../../controller/auth';
 import { logout } from '../../controller/auth';
+import { getUser } from '../../controller/auth';
 
 import multer from 'multer';
 import { userAutorization } from '../../utils/authorization';
@@ -17,5 +18,7 @@ authRouter.post('/signup', upload.single('avatar'), signup);
 authRouter.post('/login', login);
 
 authRouter.delete('/logout', userAutorization, logout)
+
+authRouter.get('/getUser', userAutorization, getUser)
 
 export default authRouter;

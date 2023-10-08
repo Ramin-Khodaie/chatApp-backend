@@ -4,7 +4,7 @@ import { deleteUserId, getUserId } from "./redis";
 
 
 export interface CustomRequest extends Request {
-    userId: string | unknown;
+    userId: string;
 }
 export const userAutorization = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -17,13 +17,13 @@ export const userAutorization = async (req: Request, res: Response, next: NextFu
         if (decode) {
             const userId = await getUserId(token);
             if (!userId) {
-                return res.status(403).json({ message: 'You Need to login first to continue11' })
+                return res.status(403).json({ message: 'You Need to login first to continue' })
             }
-            (req as CustomRequest).userId = userId;
+            (req as CustomRequest).userId = userId as string;
             next()
         } else {
             deleteUserId(token);
-            return res.status(403).json({ message: 'You Need to login first to continue222' })
+            return res.status(403).json({ message: 'You Need to login first to continue' })
         }
 
     } catch (error) {

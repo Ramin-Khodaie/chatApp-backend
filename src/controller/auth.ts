@@ -1,6 +1,7 @@
 import {
   deleteRefreshToken,
   getUserByEmail,
+  getUserById,
   isUserExist,
   userSignUp,
 } from "../model/user/userModal";
@@ -12,6 +13,7 @@ import { v4 as uuidV4 } from "uuid";
 import { encryptedPassword } from "../utils/functions";
 import { CustomRequest } from "../utils/authorization";
 import { deleteUserId } from "../utils/redis";
+import user from "../model/user/userSchema";
 
 
 
@@ -45,15 +47,15 @@ export const signup = async (req: Request, res: Response) => {
       userName,
       email,
       password: hashedPassword,
-      confirmPassword,
+      confirmPassword: hashedPassword,
       phoneNumber,
       avatar,
     });
     if (createdUser) {
-      res.status(200).json({ status: "ok", message: "New_User", data: {} });
+      return res.status(200).json({ status: "ok", message: "New_User", data: {} });
     }
   } catch (error) {
-    res.status(500).json({ message: error });
+    return res.status(500).json({ message: error });
   }
 };
 
@@ -95,6 +97,17 @@ export const logout = async (req: any, res: Response) => {
 
   deleteUserId(token);
 
-  const user = await deleteRefreshToken(userId as string, "");
-  res.status(200).json({ message: 'logged out successfully', token: req.headers.authorization })
+  await deleteRefreshToken(userId as string, "");
+  res.status(200).json({ message: 'logged out successfully' })
+}
+
+
+export const getUser = async (req: Request, res: Response) => {
+  const userId = (req as CustomRequest).userId;
+
+  const user = await getUserById(userId);
+  if (!user) {
+    res.status(403).json({ message: 'user not found', })
+  }
+  res.status(200).json({ message: 'success', data: user })
 }

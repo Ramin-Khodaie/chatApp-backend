@@ -79,3 +79,13 @@ export const deleteRefreshToken = (_id: string, token: string) => {
         }
     })
 }
+
+export const getUserById = (userId: string) => {
+    return new Promise((resolve, reject) => {
+        try {
+            user.findById({ _id: userId }, { userName: 1, email: 1, phoneNumber: 1, userId: 1, avatar: 1, }).then((res) => resolve(res)).catch((err) => reject(err))
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
